@@ -7,8 +7,8 @@
   "author": "Adam El Amrani Colina <adelamco1091@outlook.com>",
   "license": "MIT",
   "scripts": {
-    "start": "npx ts-node ./src/server/index.ts",
-    "dev": "nodemon ./src/server/index.ts"
+    "start": "npx ts-node ./src/index.ts",
+    "dev": "nodemon ./src/index.ts"
   },
   "dependencies": {
     "@types/express": "^4.17.21",
