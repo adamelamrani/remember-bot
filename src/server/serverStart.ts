@@ -1,6 +1,6 @@
 import { Express } from "express";
 const chalk = require("chalk");
-const statusSelector = require("../utils/statusSelector");
+import statusSelector from "../utils/statusSelector";
 
 const serverStart = (port: number, app: Express) =>
   new Promise((resolve, reject) => {
