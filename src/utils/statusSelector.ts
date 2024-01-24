@@ -13,4 +13,4 @@ const statusSelector = (statusCode: number) => {
   }
 }
 
-module.exports = statusSelector;
+export default statusSelector;

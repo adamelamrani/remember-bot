@@ -1,6 +1,6 @@
 export { }
 import { Request, Response } from 'express';
-const statusSelector = require('../utils/statusSelector');
+import statusSelector from '../utils/statusSelector';
 const express = require('express');
 const messagesRouter = express();
 
@@ -9,4 +9,4 @@ messagesRouter.get('/', (req: Request, res: Response) => {
   res.send('Hello World!');
 })
 
-module.exports = messagesRouter;
+export default messagesRouter;
