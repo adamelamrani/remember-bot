@@ -9,7 +9,7 @@
   "scripts": {
     "start": "npx ts-node ./src/index.ts",
     "dev": "nodemon ./src/index.ts",
-    "bot": "npx ts-node ./src/bot/telegramBot.ts"
+    "bot": "npx ts-node ./src/bot/telegramBot.ts --watch"
   },
   "dependencies": {
     "@types/express": "^4.17.21",
