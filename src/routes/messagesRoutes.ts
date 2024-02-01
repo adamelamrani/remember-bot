@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import statusSelector from '../utils/statusSelector';
-const express = require('express');
+import express from 'express';
+
 const messagesRouter = express();
 
 messagesRouter.get('/', (req: Request, res: Response) => {

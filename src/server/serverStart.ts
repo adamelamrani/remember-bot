@@ -8,8 +8,8 @@ const serverStart = (port: number, app: Express) =>
       resolve(console.log(statusSelector(0)(`Server is listening at http://localhost:${port}`)));
     });
     server.on("error", (error) => {
-      chalk.red.bold.underline(`Error on server’ ${error.message}`);
-      reject(new Error(`Error on server’ ${error.message}`));
+      chalk.red.bold.underline(`Error on server ${error.message}`);
+      reject(new Error(`Error on server ${error.message}`));
     });
   });
 
