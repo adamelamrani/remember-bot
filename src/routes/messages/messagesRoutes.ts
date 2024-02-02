@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import statusSelector from '../utils/statusSelector';
+import statusSelector from '../../utils/statusSelector';
 import express from 'express';
+import MessagesController from '../../controllers/chats/chatsController';
+
+const chats = new MessagesController();
 
 const messagesRouter = express();
 
-messagesRouter.get('/', (req: Request, res: Response) => {
-  console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/messages" with status code ${res.statusCode}`)));
-  res.send(JSON.stringify({ message: "Hello World" }));
-})
+messagesRouter.get('/', chats.getChats)
 
 messagesRouter.post('/', (req: Request, res: Response) => {
   console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/messages" with status code ${res.statusCode}`)));
