@@ -1,11 +1,5 @@
 import express from 'express';
-import ChatsController from '../../../controllers/chats/chatsController';
-
-
-interface Chats {
-  id: number;
-  name: string;
-}
+import ChatsController from '../../controllers/chats/chatsController';
 
 const chats = new ChatsController();
 const chatsRouter = express();

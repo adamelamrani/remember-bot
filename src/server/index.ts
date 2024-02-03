@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from 'express';
 import messagesRouter from '../routes/messages/messagesRoutes';
-import chatsRouter from "../routes/messages/chats/chatRoutes";
+import chatsRouter from "../routes/chats/chatRoutes";
 import bot from "../bot/bot";
 
 const token = process.env.TELEGRAM_API_KEY;

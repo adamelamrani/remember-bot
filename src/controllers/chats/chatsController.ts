@@ -4,6 +4,8 @@ import statusSelector from "../../utils/statusSelector";
 
 interface ChatsControllerInterface {
   getChats(req: Request, res: Response): Promise<void>;
+  getChatById(req: Request, res: Response): Promise<void>;
+  addChat(req: Request, res: Response): Promise<void>;
 }
 
 class ChatsController implements ChatsControllerInterface {
@@ -50,8 +52,26 @@ class ChatsController implements ChatsControllerInterface {
   }
 
   async addChat(req: Request, res: Response): Promise<void> {
-    console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/messages" with status code ${res.statusCode}`)));
-    res.send(JSON.stringify(`Este será el mensaje que se guardará en la BBDD: ${req.body}`));
+    try {
+      if (req.body.chatName === undefined || req.body.chatName === '' || req.body.chatName === null) {
+        res.status(400).send('Bad Request. Name must be a string and cannot be empty');
+        return;
+      }
+
+      if (req.body.chatId === undefined || isNaN(req.body.chatId) || req.body.chatId === null) {
+        res.status(400).send('Bad Request. Id must be a number');
+        return;
+      }
+      await query('INSERT INTO chats (chatId, chatName) VALUES ($1, $2)', [req.body.chatId, req.body.chatName]);
+      if (res.statusCode === 200) {
+        res.set('Content-Type', 'application/json');
+        res.status(201).send(JSON.stringify({ message: 'Chat added' }));
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+
   }
 };
 
