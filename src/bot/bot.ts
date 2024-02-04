@@ -56,27 +56,6 @@ const bot = (token: string) => {
 
       bot.sendMessage(chatId, 'pong');
     }
-
-    if (message === 'tete') {
-      fetch(`${process.env.API_URL}chat`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      })
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error('Error making the request');
-        })
-        .then(data => {
-          console.log(chatId, 'Response from backend: ' + data);
-        })
-        .catch(error => {
-          console.log(chatId, 'There has been an error: ', error);
-        });
-    }
   });
 
   bot.onText(/\/remember/, (msg: Message) => {

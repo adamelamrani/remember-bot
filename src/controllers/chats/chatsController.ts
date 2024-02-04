@@ -42,6 +42,7 @@ class ChatsController implements ChatsControllerInterface {
   }
 
   addChat = async (req: Request, res: Response): Promise<void> => {
+
     try {
       const chat = await this.chatRepository.save(req.body);
       res.set('Content-Type', 'application/json');
@@ -53,7 +54,6 @@ class ChatsController implements ChatsControllerInterface {
       console.error(error);
       res.status(500).send('Internal Server Error');
     }
-
   }
 };
 
