@@ -44,7 +44,7 @@ class ChatsController implements ChatsControllerInterface {
   addChat = async (req: Request, res: Response): Promise<void> => {
 
     try {
-      const chat = await this.chatRepository.save(req.body);
+      await this.chatRepository.save(req.body);
       res.set('Content-Type', 'application/json');
 
       console.log(statusSelector(res.statusCode)((` POST resquest to endpoint "/chat" with status code ${res.statusCode}`)));

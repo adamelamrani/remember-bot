@@ -5,6 +5,7 @@ import "reflect-metadata"
 import "dotenv/config";
 import { DataSource } from "typeorm"
 import Chat from "../db/chats/entity/ChatsEntity";
+import Message from "../db/messages/entity/MessagesEntity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
@@ -13,7 +14,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Chat],
+  entities: [Chat, Message],
   synchronize: true,
   logging: false,
 })

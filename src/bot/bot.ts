@@ -21,7 +21,7 @@ const bot = (token: string) => {
           bot.sendMessage(chatId, 'I am already in this chat! I will remember your messages!');
           return;
         } else {
-          return fetch(`${process.env.API_URL}chats`, {
+          return fetch(`${process.env.API_URL}chat`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -53,7 +53,6 @@ const bot = (token: string) => {
     const message = msg.text;
 
     if (message === 'ping') {
-
       bot.sendMessage(chatId, 'pong');
     }
   });
@@ -67,7 +66,7 @@ const bot = (token: string) => {
       username: msg.reply_to_message?.from?.username,
       id: require('crypto').randomUUID(),
       message: messageToRemember,
-      date: new Date(msg.date),
+      timestamp: new Date(msg.reply_to_message?.date! * 1000),
       chatid: chatId
     }
 
@@ -79,7 +78,7 @@ const bot = (token: string) => {
     bot.sendMessage(chatId, messageToRemember ? `@${messageOwner?.username} Prepare your annus.` : `Answer with the command "/remember" to the message that you want to remember, bitch!`);
 
     if (messageToRemember) {
-      fetch(`${process.env.API_URL}messages`, {
+      fetch(`${process.env.API_URL}message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -106,7 +105,7 @@ const bot = (token: string) => {
     const chatId = msg.chat.id;
     const username = match ? match[1] : "";
 
-    fetch(`${process.env.API_URL}messages/${username}`, {
+    fetch(`${process.env.API_URL}message/${username}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -121,7 +120,7 @@ const bot = (token: string) => {
       .then(data => {
         if (data.messages.length >= 1) {
           data.messages.forEach((message: any) => {
-            bot.sendMessage(chatId, message.message);
+            bot.sendMessage(chatId, ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`);
           });
         }
       })
@@ -134,7 +133,7 @@ const bot = (token: string) => {
     const chatId = msg.chat.id;
     const username = match ? match[1] : "";
 
-    fetch(`${process.env.API_URL}messages/${username}`, {
+    fetch(`${process.env.API_URL}message/${username}/last`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -147,7 +146,7 @@ const bot = (token: string) => {
         throw new Error('Error making the request');
       })
       .then(data => {
-        bot.sendMessage(chatId, data.messages[data.messages.length - 1].message);
+        bot.sendMessage(chatId, `${data.message.username} said: ${data.message.message}`);
       })
       .catch(error => {
         console.log('There has been an error: ', error);

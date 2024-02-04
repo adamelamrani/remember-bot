@@ -1,29 +1,25 @@
-/* import { Request, Response } from 'express';
-import { query } from "../../db/dbConnect";
+import { Request, Response } from 'express';
 import statusSelector from "../../utils/statusSelector";
+import MessagesRepository from '../../db/messages/repository/MessagesRepository';
 
 interface MessagesControllerInterface {
-  getMessages(req: Request, res: Response): Promise<void>;
+  getAllMessages(req: Request, res: Response): Promise<void>;
   getMessagesByUsername(req: Request, res: Response): Promise<void>;
+  getLastMessageFromUser(req: Request, res: Response): Promise<void>;
   addMessage(req: Request, res: Response): Promise<void>;
 }
 
 class MessagesController implements MessagesControllerInterface {
-  async getMessages(req: Request, res: Response): Promise<void> {
+  private messagesRepository = new MessagesRepository;
+
+  getAllMessages = async (req: Request, res: Response): Promise<void> => {
 
     try {
-      const messages = await query('SELECT * FROM messages');
+      const messageList = await this.messagesRepository.getAllMessages();
+      res.set('Content-Type', 'application/json');
 
-      if (messages.rowCount === 0) {
-        res.set('Content-Type', 'application/json');
-        res.status(404).send('No messages found');
-      }
-
-      if (res.statusCode === 200) {
-        console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/messages" with status code ${res.statusCode}`)));
-        res.set('Content-Type', 'application/json');
-        res.send(JSON.stringify({ messages: messages.rows }));
-      }
+      console.log(statusSelector(res.statusCode)((`GET resquest to endpoint "/message" with status code ${res.statusCode}`)));
+      res.status(200).send(JSON.stringify({ messages: messageList }));
 
     } catch (error) {
       console.error(error);
@@ -31,46 +27,45 @@ class MessagesController implements MessagesControllerInterface {
     }
   }
 
-  async getMessagesByUsername(req: Request, res: Response): Promise<void> {
+  getMessagesByUsername = async (req: Request, res: Response): Promise<void> => {
+
     try {
-      const messages = await query('SELECT * FROM messages WHERE username = $1', [req.params.username]);
+      const messageList = await this.messagesRepository.getAllMessagesFromUser(req.params.username);
+      res.set('Content-Type', 'application/json');
 
-      if (messages.rowCount === 0) {
-        res.set('Content-Type', 'application/json');
-        res.status(404).send('No messages found');
-      }
+      console.log(statusSelector(res.statusCode)((`GET resquest to endpoint "/message/${req.params.username}" with status code ${res.statusCode}`)));
+      res.status(200).send(JSON.stringify({ messages: messageList }));
 
-      if (res.statusCode === 200) {
-        console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/messages/${req.params.username}" with status code ${res.statusCode}`)));
-        res.set('Content-Type', 'application/json');
-        res.send(JSON.stringify({ messages: messages.rows }));
-      }
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
     }
   }
 
-  async addMessage(req: Request, res: Response): Promise<void> {
+  getLastMessageFromUser = async (req: Request, res: Response): Promise<void> => {
+
     try {
-      if (req.body.message === undefined || req.body.message === '' || req.body.message === null) {
-        console.log(statusSelector(res.statusCode)((`Resquest with POST method to endpoint "/messages/" with status code ${res.statusCode}`)));
-        res.status(400).send('Bad Request. Message must be a string and cannot be empty');
-        return;
-      }
+      const message = await this.messagesRepository.getLastMessageFromUser(req.params.username);
+      res.set('Content-Type', 'application/json');
 
-      if (req.body.username === undefined || req.body.username === '' || req.body.username === null) {
-        console.log(statusSelector(res.statusCode)((`Resquest with POST method to endpoint "/messages/" with status code ${res.statusCode}`)));
-        res.status(400).send('Bad Request. Username must be a string and cannot be empty');
-        return;
-      }
+      console.log(statusSelector(res.statusCode)((`GET resquest to endpoint "/message/${req.params.username}" with status code ${res.statusCode}`)));
+      res.status(200).send(JSON.stringify({ message: message }));
 
-      await query('INSERT INTO messages (id, message, username, date, chatId) VALUES ($1, $2, $3, $4, $5)', [req.body.id, req.body.message, req.body.username, req.body.date, req.body.chatId]);
-      if (res.statusCode === 200) {
-        res.set('Content-Type', 'application/json');
-        console.log(statusSelector(res.statusCode)((`Resquest with POST method to endpoint "/messages/" with status code ${res.statusCode}`)));
-        res.status(201).send(JSON.stringify({ message: 'Message added' }));
-      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+    }
+  }
+
+  addMessage = async (req: Request, res: Response): Promise<void> => {
+
+    try {
+      await this.messagesRepository.save(req.body);
+      res.set('Content-Type', 'application/json');
+
+      console.log(statusSelector(res.statusCode)((` POST resquest to endpoint "/message" with status code ${res.statusCode}`)));
+      res.status(200).send(JSON.stringify({ message: "Message added correctly" }));
+
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
@@ -78,4 +73,4 @@ class MessagesController implements MessagesControllerInterface {
   }
 }
 
-export default MessagesController; */
+export default MessagesController;

@@ -9,7 +9,7 @@ const token = process.env.TELEGRAM_API_KEY;
 const app = express();
 bot(token as string);
 app.use(express.json());
-app.use("/messages", messagesRouter);
+app.use("/message", messagesRouter);
 app.use("/chat", chatsRouter);
 
 export default app;
