@@ -1,37 +1,34 @@
 import { Request, Response } from 'express';
-import { query } from "../../db/dbConnect";
+/* import { query } from "../../db/dbConnect"; */
 import statusSelector from "../../utils/statusSelector";
+import ChatRepository from '../../db/chats/repository/chatRepository';
+import Chat from '../../db/chats/entity/ChatsEntity';
 
 interface ChatsControllerInterface {
   getChats(req: Request, res: Response): Promise<void>;
-  getChatById(req: Request, res: Response): Promise<void>;
-  addChat(req: Request, res: Response): Promise<void>;
+  /* getChatById(req: Request, res: Response): Promise<void>;
+  addChat(req: Request, res: Response): Promise<void>; */
 }
 
 class ChatsController implements ChatsControllerInterface {
   async getChats(req: Request, res: Response): Promise<void> {
+    const chat = new ChatRepository();
 
     try {
-      const chats = await query('SELECT * FROM chats');
+      const chatList = await chat.getAllChats();
+      res.set('Content-Type', 'application/json');
 
-      if (chats.rowCount === 0) {
-        res.set('Content-Type', 'application/json');
-        res.status(404).send('No chats found');
-      }
-
-      if (res.statusCode === 200) {
-        console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/chats" with status code ${res.statusCode}`)));
-        res.set('Content-Type', 'application/json');
-        res.send(JSON.stringify({ chats: chats.rows }));
-      }
+      console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/chats" with status code ${res.statusCode}`)));
+      res.status(200).send(JSON.stringify({ chats: chatList }));
 
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
     }
+
   }
 
-  async getChatById(req: Request, res: Response): Promise<void> {
+  /* async getChatById(req: Request, res: Response): Promise<void> {
     try {
       const chat = await query('SELECT * FROM chats WHERE chatId = $1', [req.params.id]);
 
@@ -72,7 +69,7 @@ class ChatsController implements ChatsControllerInterface {
       res.status(500).send('Internal Server Error');
     }
 
-  }
+  } */
 };
 
 export default ChatsController;

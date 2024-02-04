@@ -1,4 +1,4 @@
-import "dotenv/config";
+/* import "dotenv/config";
 import { Pool, PoolConfig } from 'pg'
 
 const clientInfo: PoolConfig = {
@@ -11,4 +11,4 @@ const clientInfo: PoolConfig = {
 
 const pool = new Pool(clientInfo)
 
-export const query = (text: string, params?: any) => pool.query(text, params);
+export const query = (text: string, params?: any) => pool.query(text, params); */

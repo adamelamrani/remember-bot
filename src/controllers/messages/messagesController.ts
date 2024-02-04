@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+/* import { Request, Response } from 'express';
 import { query } from "../../db/dbConnect";
 import statusSelector from "../../utils/statusSelector";
 
@@ -78,4 +78,4 @@ class MessagesController implements MessagesControllerInterface {
   }
 }
 
-export default MessagesController;
+export default MessagesController; */

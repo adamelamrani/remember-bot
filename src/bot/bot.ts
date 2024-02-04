@@ -1,4 +1,6 @@
 import TelegramBot, { Message } from "node-telegram-bot-api";
+import { AppDataSource } from "../server/serverStart";
+import Chat from "../db/chats/entity/ChatsEntity";
 
 const bot = (token: string) => {
 
@@ -24,7 +26,7 @@ const bot = (token: string) => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ chatId: chatId, chatName: msg.chat.title })
+            body: JSON.stringify({ chatid: chatId, chatname: msg.chat.title })
           }).then(response => {
             if (response.ok) {
               bot.sendMessage(chatId, 'Welcome to the chat! I will remember your messages!');
@@ -45,12 +47,35 @@ const bot = (token: string) => {
     }
   });
 
-  bot.on('message', (msg: Message) => {
+  bot.on('message', async (msg: Message) => {
+
     const chatId = msg.chat.id;
     const message = msg.text;
 
     if (message === 'ping') {
+
       bot.sendMessage(chatId, 'pong');
+    }
+
+    if (message === 'tete') {
+      fetch(`${process.env.API_URL}chat`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.json();
+          }
+          throw new Error('Error making the request');
+        })
+        .then(data => {
+          console.log(chatId, 'Response from backend: ' + data);
+        })
+        .catch(error => {
+          console.log(chatId, 'There has been an error: ', error);
+        });
     }
   });
 

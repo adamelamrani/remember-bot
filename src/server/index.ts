@@ -10,6 +10,6 @@ const app = express();
 bot(token as string);
 app.use(express.json());
 app.use("/messages", messagesRouter);
-app.use("/chats", chatsRouter);
+app.use("/chat", chatsRouter);
 
 export default app;
