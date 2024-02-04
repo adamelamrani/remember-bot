@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { query } from "../../db/dbConnect";
 import statusSelector from "../../utils/statusSelector";
+import ChatRepository from '../../db/chats/repository/chatRepository';
 
 interface ChatsControllerInterface {
   getChats(req: Request, res: Response): Promise<void>;
@@ -9,21 +9,16 @@ interface ChatsControllerInterface {
 }
 
 class ChatsController implements ChatsControllerInterface {
-  async getChats(req: Request, res: Response): Promise<void> {
+  private chatRepository = new ChatRepository();
+
+  getChats = async (req: Request, res: Response): Promise<void> => {
 
     try {
-      const chats = await query('SELECT * FROM chats');
+      const chatList = await this.chatRepository.getAllChats();
+      res.set('Content-Type', 'application/json');
 
-      if (chats.rowCount === 0) {
-        res.set('Content-Type', 'application/json');
-        res.status(404).send('No chats found');
-      }
-
-      if (res.statusCode === 200) {
-        console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/chats" with status code ${res.statusCode}`)));
-        res.set('Content-Type', 'application/json');
-        res.send(JSON.stringify({ chats: chats.rows }));
-      }
+      console.log(statusSelector(res.statusCode)((`GET resquest to endpoint "/chat" with status code ${res.statusCode}`)));
+      res.status(200).send(JSON.stringify({ chats: chatList }));
 
     } catch (error) {
       console.error(error);
@@ -31,47 +26,34 @@ class ChatsController implements ChatsControllerInterface {
     }
   }
 
-  async getChatById(req: Request, res: Response): Promise<void> {
+  getChatById = async (req: Request, res: Response): Promise<void> => {
+
     try {
-      const chat = await query('SELECT * FROM chats WHERE chatId = $1', [req.params.id]);
+      const chat = await this.chatRepository.getChatById(Number(req.params.id));
+      res.set('Content-Type', 'application/json');
 
-      if (chat.rowCount === 0) {
-        res.set('Content-Type', 'application/json');
-        res.status(404).send('No chats found');
-      }
+      console.log(statusSelector(res.statusCode)((`GET resquest to endpoint "/chat" with status code ${res.statusCode}`)));
+      res.status(200).send(JSON.stringify({ chat: chat }));
 
-      if (res.statusCode === 200) {
-        console.log(statusSelector(res.statusCode)((`Resquest to endpoint "/chats/${req.params.id}" with status code ${res.statusCode}`)));
-        res.set('Content-Type', 'application/json');
-        res.send(JSON.stringify({ chats: chat.rows }));
-      }
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
     }
   }
 
-  async addChat(req: Request, res: Response): Promise<void> {
-    try {
-      if (req.body.chatName === undefined || req.body.chatName === '' || req.body.chatName === null) {
-        res.status(400).send('Bad Request. Name must be a string and cannot be empty');
-        return;
-      }
+  addChat = async (req: Request, res: Response): Promise<void> => {
 
-      if (req.body.chatId === undefined || isNaN(req.body.chatId) || req.body.chatId === null) {
-        res.status(400).send('Bad Request. Id must be a number');
-        return;
-      }
-      await query('INSERT INTO chats (chatId, chatName) VALUES ($1, $2)', [req.body.chatId, req.body.chatName]);
-      if (res.statusCode === 200) {
-        res.set('Content-Type', 'application/json');
-        res.status(201).send(JSON.stringify({ message: 'Chat added' }));
-      }
+    try {
+      await this.chatRepository.save(req.body);
+      res.set('Content-Type', 'application/json');
+
+      console.log(statusSelector(res.statusCode)((` POST resquest to endpoint "/chat" with status code ${res.statusCode}`)));
+      res.status(200).send(JSON.stringify({ message: "Chat added correctly" }));
+
     } catch (error) {
       console.error(error);
       res.status(500).send('Internal Server Error');
     }
-
   }
 };
 

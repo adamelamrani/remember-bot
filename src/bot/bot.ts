@@ -1,4 +1,7 @@
 import TelegramBot, { Message } from "node-telegram-bot-api";
+import { checkGroup } from "./service/checkGroup";
+import { rememberMessage } from "./service/rememberMessage";
+import { getLastMessageFrom, getMessagesFrom } from "./service/getMessages";
 
 const bot = (token: string) => {
 
@@ -6,46 +9,12 @@ const bot = (token: string) => {
 
   bot.onText(/\/start/, (msg: Message) => {
     const chatId = msg.chat.id;
+    checkGroup({ bot, msg, chatId });
 
-    if (msg.chat.type !== "private") {
-      // Verify if the group exists in the database
-      fetch(`${process.env.API_URL}chats/${chatId}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-      }).then(response => {
-        if (response.ok) {
-          bot.sendMessage(chatId, 'I am already in this chat! I will remember your messages!');
-          return;
-        } else {
-          return fetch(`${process.env.API_URL}chats`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ chatId: chatId, chatName: msg.chat.title })
-          }).then(response => {
-            if (response.ok) {
-              bot.sendMessage(chatId, 'Welcome to the chat! I will remember your messages!');
-              return response.json();
-            }
-            throw new Error('Error making the request');
-          })
-            .then(data => {
-              console.log(chatId, 'Response from backend: ' + data.message);
-            })
-            .catch(error => {
-              console.log(chatId, 'There has been an error: ', error);
-            });
-        }
-      })
-    } else {
-      bot.sendMessage(chatId, `Welcome! Add me to a group to save messages and remember them later!`);
-    }
   });
 
-  bot.on('message', (msg: Message) => {
+  bot.on('message', async (msg: Message) => {
+
     const chatId = msg.chat.id;
     const message = msg.text;
 
@@ -56,98 +25,29 @@ const bot = (token: string) => {
 
   bot.onText(/\/remember/, (msg: Message) => {
     const chatId = msg.chat.id;
-    const messageToRemember = msg.reply_to_message?.text;
-    const messageOwner = msg.reply_to_message?.from;
-
-    const bodyRequest = {
-      username: msg.reply_to_message?.from?.username,
-      id: require('crypto').randomUUID(),
-      message: messageToRemember,
-      date: new Date(msg.date),
-      chatid: chatId
-    }
-
-    if (msg.chat.type === "private") {
-      bot.sendMessage(msg.chat.id, "I will only remember messages from groups");
-      return;
-    }
-
-    bot.sendMessage(chatId, messageToRemember ? `@${messageOwner?.username} Prepare your annus.` : `Answer with the command "/remember" to the message that you want to remember, bitch!`);
-
-    if (messageToRemember) {
-      fetch(`${process.env.API_URL}messages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyRequest)
-      })
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          }
-          throw new Error('Error making the request');
-        })
-        .then(data => {
-          console.log(chatId, 'Response from backend: ' + data.message);
-        })
-        .catch(error => {
-          console.log(chatId, 'There has been an error: ', error);
-        });
-    }
-
+    rememberMessage({ bot, msg, chatId });
   });
 
   bot.onText(/^\/getMessagesFrom (.+)$/, (msg: Message, match: RegExpExecArray | null) => {
     const chatId = msg.chat.id;
-    const username = match ? match[1] : "";
-
-    fetch(`${process.env.API_URL}messages/${username}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Error making the request');
-      })
-      .then(data => {
-        if (data.messages.length >= 1) {
-          data.messages.forEach((message: any) => {
-            bot.sendMessage(chatId, message.message);
-          });
-        }
-      })
-      .catch(error => {
-        console.log('There has been an error: ', error);
-      });
+    getMessagesFrom({ bot, msg, chatId, match });
   });
 
   bot.onText(/^\/getLastMessageFrom (.+)$/, (msg: Message, match: RegExpExecArray | null) => {
     const chatId = msg.chat.id;
-    const username = match ? match[1] : "";
+    getLastMessageFrom({ bot, msg, chatId, match });
+  });
 
-    fetch(`${process.env.API_URL}messages/${username}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Error making the request');
-      })
-      .then(data => {
-        bot.sendMessage(chatId, data.messages[data.messages.length - 1].message);
-      })
-      .catch(error => {
-        console.log('There has been an error: ', error);
-      });
+  bot.onText(/\/help/, (msg: Message) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, `
+    Commands:
+      /start - Start the bot
+      /remember - Remember the message
+      /getMessagesFrom username - Get all messages from a user
+      /getLastMessageFrom username - Get last message from user
+      /help - Show this message`
+    );
   });
 }
 
