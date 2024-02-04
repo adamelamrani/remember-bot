@@ -21,7 +21,7 @@ export const checkGroup = async ({ bot, msg, chatId }: BotFunctions) => {
           body: JSON.stringify({ chatid: chatId, chatname: msg.chat.title })
         }).then(response => {
           if (response.ok) {
-            bot.sendMessage(chatId, 'Welcome to the chat! I will remember your messages!');
+            bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!');
             return response.json();
           }
           throw new Error('Error making the request');
