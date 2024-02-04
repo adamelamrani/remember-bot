@@ -12,4 +12,4 @@ app.use(express.json());
 app.use("/messages", messagesRouter);
 app.use("/chats", chatsRouter);
 
-module.exports = app;
+export default app;

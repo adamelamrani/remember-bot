@@ -13,4 +13,4 @@ const serverStart = (port: number, app: Express) =>
     });
   });
 
-module.exports = serverStart;
+export default serverStart;

@@ -1,15 +1,13 @@
-export { };
+import "reflect-metadata"
 import "dotenv/config";
-const serverStart = require("./server/serverStart");
-const chalk = require("chalk");
-const app = require("./server/index");
+import serverStart from "./server/serverStart";
+import chalk from "chalk";
+import app from "./server/index"
 
-const port = process.env.PORT;
-//const dataBaseUrl = process.env.DATA_BASE_URL;
+const port = Number(process.env.PORT) || 3000;
 (async () => {
   try {
     await serverStart(port, app);
-    //await connectDataBase(dataBaseUrl);
   } catch (error) {
     chalk.red((error as Error).message);
   }
