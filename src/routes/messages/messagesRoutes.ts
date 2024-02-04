@@ -6,8 +6,8 @@ const messages = new MessagesController();
 const messagesRouter = express();
 
 messagesRouter.get('/', messages.getAllMessages)
-messagesRouter.get('/:username', messages.getMessagesByUsername)
-messagesRouter.get('/:username/last', messages.getLastMessageFromUser)
+messagesRouter.get('/:username/:chatid', messages.getMessagesByUsername)
+messagesRouter.get('/:username/:chatid/last', messages.getLastMessageFromUser)
 messagesRouter.post('/', messages.addMessage)
 
 export default messagesRouter;

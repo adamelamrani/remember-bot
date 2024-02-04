@@ -30,7 +30,7 @@ class MessagesController implements MessagesControllerInterface {
   getMessagesByUsername = async (req: Request, res: Response): Promise<void> => {
 
     try {
-      const messageList = await this.messagesRepository.getAllMessagesFromUser(req.params.username);
+      const messageList = await this.messagesRepository.getAllMessagesFromUser(req.params.username, Number(req.params.chatid));
       res.set('Content-Type', 'application/json');
 
       console.log(statusSelector(res.statusCode)((`GET resquest to endpoint "/message/${req.params.username}" with status code ${res.statusCode}`)));
@@ -45,10 +45,10 @@ class MessagesController implements MessagesControllerInterface {
   getLastMessageFromUser = async (req: Request, res: Response): Promise<void> => {
 
     try {
-      const message = await this.messagesRepository.getLastMessageFromUser(req.params.username);
+      const message = await this.messagesRepository.getLastMessageFromUser(req.params.username, Number(req.params.chatid));
       res.set('Content-Type', 'application/json');
 
-      console.log(statusSelector(res.statusCode)((`GET resquest to endpoint "/message/${req.params.username}" with status code ${res.statusCode}`)));
+      console.log(statusSelector(res.statusCode)((`GET resquest to endpoint "/message/${req.params.username}/${req.params.chatid}/last" with status code ${res.statusCode}`)));
       res.status(200).send(JSON.stringify({ message: message }));
 
     } catch (error) {

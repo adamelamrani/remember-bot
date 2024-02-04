@@ -37,6 +37,18 @@ const bot = (token: string) => {
     const chatId = msg.chat.id;
     getLastMessageFrom({ bot, msg, chatId, match });
   });
+
+  bot.onText(/\/help/, (msg: Message) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(chatId, `
+    Commands:
+      /start - Start the bot
+      /remember - Remember the message
+      /getMessagesFrom username - Get all messages from a user
+      /getLastMessageFrom username - Get last message from user
+      /help - Show this message`
+    );
+  });
 }
 
 export default bot;

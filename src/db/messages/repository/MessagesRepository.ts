@@ -8,12 +8,12 @@ export default class MessagesRepository {
     await messageRepository.save(message)
   }
 
-  async getAllMessagesFromUser(username: string) {
-    return await messageRepository.findBy({ username: username })
+  async getAllMessagesFromUser(username: string, chatid: number) {
+    return await messageRepository.findBy({ username: username, chatid: chatid })
   }
 
-  async getLastMessageFromUser(username: string) {
-    return await messageRepository.findOneBy({ username: username })
+  async getLastMessageFromUser(username: string, chatid: number) {
+    return await messageRepository.findOneBy({ username: username, chatid: chatid })
   }
 
   async getAllMessages() {
