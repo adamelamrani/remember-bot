@@ -13,8 +13,7 @@ const bot = (token: string) => {
 
   });
 
-  bot.on('message', async (msg: Message) => {
-
+  bot.on('text', (msg: Message) => {
     const chatId = msg.chat.id;
     const message = msg.text;
 
