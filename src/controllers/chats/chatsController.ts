@@ -1,7 +1,7 @@
 import { type Request, type Response } from 'express'
 import statusSelector from '../../utils/statusSelector'
 import ChatRepository from '../../db/chats/repository/chatRepository'
-import type Chat from '../../db/chats/entity/ChatsEntity'
+import type Chat from '../../db/chats/entity/Chat.entity'
 
 interface ChatsControllerInterface {
   getChats: (req: Request, res: Response) => Promise<void>

@@ -5,8 +5,13 @@ export const checkGroup = async ({ bot, msg, chatId }: BotFunctions): Promise<vo
   if (msg.chat.type !== 'private') {
     // Verify if the group exists in the database
     const chat = new ChatRepository();
-    const chatResult = await chat.getChatById(chatId)
-    console.log(chatResult)
+    /* const chatResult = await chat.getChatById(chatId)
+    console.log(chatResult) */
+    const a = null;
+    if (/* chatResult ===  */a === null) {
+      await chat.save({ chatid: chatId, chatname: msg.chat?.title ?? `chat_${chatId}` })
+      await bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!');
+    }
     /* if (chatResult.status === 404) {
       const chatToAdd = await fetch(`${process.env.API_URL}chat`, {
         method: 'POST',

@@ -4,8 +4,8 @@ import 'reflect-metadata'
 import 'dotenv/config';
 import { DataSource } from 'typeorm'
 import chalk from 'chalk';
-import Chat from '../db/chats/entity/ChatsEntity';
-import Message from '../db/messages/entity/MessagesEntity';
+import Chat from '../db/chats/entity/Chat.entity';
+import Message from '../db/messages/entity/Message.entity';
 
 export const AppDataSource = new DataSource({
   metadataTableName: 'metadata',

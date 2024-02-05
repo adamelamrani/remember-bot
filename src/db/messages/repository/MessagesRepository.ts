@@ -1,5 +1,5 @@
 import { AppDataSource } from '../../../server/serverStart'
-import Message from '../entity/MessagesEntity'
+import Message from '../entity/Message.entity'
 
 const messageRepository = AppDataSource.getRepository(Message)
 

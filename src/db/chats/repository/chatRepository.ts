@@ -1,10 +1,14 @@
 import { AppDataSource } from '../../../server/serverStart'
-import Chat from '../entity/ChatsEntity'
+import Chat from '../entity/Chat.entity'
 
 const chatRepository = AppDataSource.getRepository(Chat)
 
 export default class ChatRepository {
   async save(chat: Chat): Promise<void> {
+    /* const existingChat = await chatRepository.findOneBy({ chatid: chat.chatid })
+    if (existingChat !== null) {
+      throw new Error('Chat already exists')
+    } */
     await chatRepository.save(chat)
   }
 

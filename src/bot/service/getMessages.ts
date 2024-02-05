@@ -1,4 +1,4 @@
-import type Message from '../../db/messages/entity/MessagesEntity';
+import type Message from '../../db/messages/entity/Message.entity';
 import { type BotFunctionsWithRegex } from '../types/BotFunctions';
 
 export const getMessagesFrom = async ({ bot, msg, chatId, match }: BotFunctionsWithRegex): Promise<void> => {

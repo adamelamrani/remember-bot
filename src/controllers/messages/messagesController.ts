@@ -1,7 +1,7 @@
 import { type Request, type Response } from 'express';
 import statusSelector from '../../utils/statusSelector';
 import MessagesRepository from '../../db/messages/repository/MessagesRepository';
-import type Message from '../../db/messages/entity/MessagesEntity';
+import type Message from '../../db/messages/entity/Message.entity';
 
 interface MessagesControllerInterface {
   getAllMessages: (req: Request, res: Response) => Promise<void>
