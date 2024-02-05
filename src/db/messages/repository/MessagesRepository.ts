@@ -1,22 +1,22 @@
-import { AppDataSource } from "../../../server/serverStart"
-import Message from "../entity/MessagesEntity"
+import { AppDataSource } from '../../../server/serverStart'
+import Message from '../entity/MessagesEntity'
 
 const messageRepository = AppDataSource.getRepository(Message)
 
 export default class MessagesRepository {
-  async save(message: Message) {
+  async save(message: Message): Promise<void> {
     await messageRepository.save(message)
   }
 
-  async getAllMessagesFromUser(username: string, chatid: number) {
-    return await messageRepository.findBy({ username: username, chatid: chatid })
+  async getAllMessagesFromUser(username: string, chatid: number): Promise<Message[]> {
+    return await messageRepository.findBy({ username, chatid })
   }
 
-  async getLastMessageFromUser(username: string, chatid: number) {
-    return await messageRepository.findOneBy({ username: username, chatid: chatid })
+  async getLastMessageFromUser(username: string, chatid: number): Promise<Message | null> {
+    return await messageRepository.findOneBy({ username, chatid })
   }
 
-  async getAllMessages() {
+  async getAllMessages(): Promise<Message[]> {
     return await messageRepository.find()
   }
 }

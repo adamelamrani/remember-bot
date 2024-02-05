@@ -1,25 +1,24 @@
-import { Entity, Column, PrimaryColumn } from "typeorm"
+import { Entity, Column, PrimaryColumn } from 'typeorm'
 
 @Entity({
   orderBy: {
-    timestamp: "DESC"
+    timestamp: 'DESC'
   }
 })
 export default class Message {
-
-  @PrimaryColumn("uuid", { name: "id", nullable: false, unique: true })
+  @PrimaryColumn('uuid', { name: 'id', nullable: false, unique: true })
   id: number;
 
-  @Column("varchar", { length: 255, nullable: false, name: "username" })
+  @Column('varchar', { length: 255, nullable: false, name: 'username' })
   username: string;
 
-  @Column("text", { nullable: false, name: "message" })
+  @Column('text', { nullable: false, name: 'message' })
   message: string;
 
-  @Column("timestamp", { name: "timestamp", nullable: false })
+  @Column('timestamp', { name: 'timestamp', nullable: false })
   timestamp: Date;
 
-  @Column("bigint", { name: "chatid", nullable: false })
+  @Column('bigint', { name: 'chatid', nullable: false })
   chatid: number;
 
   constructor(id: number, username: string, message: string, timestamp: Date, chatid: number) {
@@ -28,21 +27,5 @@ export default class Message {
     this.message = message;
     this.timestamp = timestamp;
     this.chatid = chatid;
-  }
-
-  getId() {
-    return this.id;
-  }
-
-  getUsername() {
-    return this.username;
-  }
-
-  getMessage() {
-    return this.message;
-  }
-
-  getTimestamp() {
-    return this.timestamp;
   }
 }

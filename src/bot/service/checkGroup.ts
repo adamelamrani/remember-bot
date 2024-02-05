@@ -1,40 +1,32 @@
-import BotFunctions from "../types/BotFunctions";
+import ChatRepository from '../../db/chats/repository/chatRepository'
+import type BotFunctions from '../types/BotFunctions'
 
-export const checkGroup = async ({ bot, msg, chatId }: BotFunctions) => {
-  if (msg.chat.type !== "private") {
+export const checkGroup = async ({ bot, msg, chatId }: BotFunctions): Promise<void> => {
+  if (msg.chat.type !== 'private') {
     // Verify if the group exists in the database
-    fetch(`${process.env.API_URL}chat/${chatId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    }).then(response => {
-      if (response.ok) {
-        bot.sendMessage(chatId, 'I am already in this chat! I will remember your messages!');
-        return;
+    const chat = new ChatRepository();
+    const chatResult = await chat.getChatById(chatId)
+    console.log(chatResult)
+    /* if (chatResult.status === 404) {
+      const chatToAdd = await fetch(`${process.env.API_URL}chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ chatid: chatId, chatname: msg.chat.title })
+      })
+
+      if (chatToAdd.status === 201) {
+        await bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!')
       } else {
-        return fetch(`${process.env.API_URL}chat`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ chatid: chatId, chatname: msg.chat.title })
-        }).then(response => {
-          if (response.ok) {
-            bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!');
-            return response.json();
-          }
-          throw new Error('Error making the request');
-        })
-          .then(data => {
-            console.log(chatId, 'Response from backend: ' + data.message);
-          })
-          .catch(error => {
-            console.log(chatId, 'There has been an error: ', error);
-          });
+        await bot.sendMessage(chatId, 'There has been an error adding the chat to the database')
       }
-    })
-  } else {
-    bot.sendMessage(chatId, `Welcome! Add me to a group to save messages and remember them later!`);
+
+      return
+    }
+
+    const chat = await chatResult.json()
+    console.log(chat)
+    await bot.sendMessage(chatId, 'I am already in this chat!') */
   }
 }
