@@ -5,42 +5,70 @@ import { type BotFunctionsWithRegex } from '../types/BotFunctions';
 
 const messageRepository = new MessagesRepository();
 
-export const getMessagesFrom = async ({ bot, msg, chatId, match }: BotFunctionsWithRegex): Promise<void> => {
-  const username = (match !== null) ? match[1] : '';
+export const getMessagesFrom = async ({
+  bot,
+  msg,
+  chatId,
+  match,
+}: BotFunctionsWithRegex): Promise<void> => {
+  const username = match !== null ? match[1] : '';
 
   if (msg.chat.type !== 'private') {
     try {
-      const messages = await messageRepository.getAllMessagesFromUser(username, chatId) as Message[]
+      const messages = (await messageRepository.getAllMessagesFromUser(
+        username,
+        chatId,
+      )) as Message[];
       messages.forEach(async (message) => {
-        await bot.sendMessage(chatId, ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`);
-      })
+        await bot.sendMessage(
+          chatId,
+          ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`,
+        );
+      });
     } catch (error: unknown) {
       if (error instanceof MessagesNotFoundError) {
         await bot.sendMessage(chatId, error.message);
       } else {
-        await bot.sendMessage(chatId, 'There has been an error')
+        await bot.sendMessage(chatId, 'There has been an error');
       }
     }
   } else {
-    await bot.sendMessage(chatId, 'This command can only be used in a group chat');
+    await bot.sendMessage(
+      chatId,
+      'This command can only be used in a group chat',
+    );
   }
-}
+};
 
-export const getLastMessageFrom = async ({ bot, msg, chatId, match }: BotFunctionsWithRegex): Promise<void> => {
-  const username = (match !== null) ? match[1] : '';
+export const getLastMessageFrom = async ({
+  bot,
+  msg,
+  chatId,
+  match,
+}: BotFunctionsWithRegex): Promise<void> => {
+  const username = match !== null ? match[1] : '';
 
   if (msg.chat.type !== 'private') {
     try {
-      const message = await messageRepository.getLastMessageFromUser(username, chatId) as Message
-      await bot.sendMessage(chatId, ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`);
+      const message = (await messageRepository.getLastMessageFromUser(
+        username,
+        chatId,
+      )) as Message;
+      await bot.sendMessage(
+        chatId,
+        ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`,
+      );
     } catch (error: unknown) {
       if (error instanceof MessagesNotFoundError) {
         await bot.sendMessage(chatId, error.message);
       } else {
-        await bot.sendMessage(chatId, 'There has been an error')
+        await bot.sendMessage(chatId, 'There has been an error');
       }
     }
   } else {
-    await bot.sendMessage(chatId, 'This command can only be used in a group chat');
+    await bot.sendMessage(
+      chatId,
+      'This command can only be used in a group chat',
+    );
   }
-}
+};

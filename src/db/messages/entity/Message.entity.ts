@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm'
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 
 @Entity({
   orderBy: {
-    timestamp: 'DESC'
-  }
+    timestamp: 'DESC',
+  },
 })
 export default class Message {
   @PrimaryColumn('uuid', { name: 'id', nullable: false, unique: true })
@@ -21,7 +21,13 @@ export default class Message {
   @Column('bigint', { name: 'chatid', nullable: false })
   chatid: number;
 
-  constructor(id: string, username: string, message: string, timestamp: Date, chatid: number) {
+  constructor(
+    id: string,
+    username: string,
+    message: string,
+    timestamp: Date,
+    chatid: number,
+  ) {
     this.id = id;
     this.username = username;
     this.message = message;
