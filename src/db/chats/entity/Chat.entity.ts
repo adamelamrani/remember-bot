@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryColumn } from 'typeorm'
 
-@Entity()
+@Entity('chat')
 export default class Chat {
   @PrimaryColumn('bigint', { name: 'chatid', nullable: false, unique: true })
   chatid: number

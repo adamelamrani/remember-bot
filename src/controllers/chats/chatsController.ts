@@ -42,7 +42,7 @@ class ChatsController implements ChatsControllerInterface {
 
       console.log(statusSelector(res.statusCode)(('GET resquest to endpoint "/chat"')))
       if (chat === undefined || chat === null) {
-        res.status(404).send(JSON.stringify({ message: 'Chat not found' }))
+        res.status(404).send(JSON.stringify({ message: null }))
         return
       }
       res.status(200).send(JSON.stringify({ chat }))

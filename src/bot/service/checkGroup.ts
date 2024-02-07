@@ -5,33 +5,13 @@ export const checkGroup = async ({ bot, msg, chatId }: BotFunctions): Promise<vo
   if (msg.chat.type !== 'private') {
     // Verify if the group exists in the database
     const chat = new ChatRepository();
-    /* const chatResult = await chat.getChatById(chatId)
-    console.log(chatResult) */
-    const a = null;
-    if (/* chatResult ===  */a === null) {
+
+    try {
       await chat.save({ chatid: chatId, chatname: msg.chat?.title ?? `chat_${chatId}` })
       await bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!');
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      await bot.sendMessage(chatId, error.message)
     }
-    /* if (chatResult.status === 404) {
-      const chatToAdd = await fetch(`${process.env.API_URL}chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ chatid: chatId, chatname: msg.chat.title })
-      })
-
-      if (chatToAdd.status === 201) {
-        await bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!')
-      } else {
-        await bot.sendMessage(chatId, 'There has been an error adding the chat to the database')
-      }
-
-      return
-    }
-
-    const chat = await chatResult.json()
-    console.log(chat)
-    await bot.sendMessage(chatId, 'I am already in this chat!') */
   }
 }
