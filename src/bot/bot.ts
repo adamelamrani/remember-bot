@@ -25,12 +25,12 @@ const bot = (token: string): void => {
     await rememberMessage({ bot, msg, chatId })
   })
 
-  bot.onText(/^\/getMessagesFrom (.+)$/, async (msg: Message, match: RegExpExecArray | null) => {
+  bot.onText(/^\/getMessagesFrom @(\S+)$/, async (msg: Message, match: RegExpExecArray | null) => {
     const chatId = msg.chat.id
     await getMessagesFrom({ bot, msg, chatId, match })
   })
 
-  bot.onText(/^\/getLastMessageFrom (.+)$/, async (msg: Message, match: RegExpExecArray | null) => {
+  bot.onText(/^\/getLastMessageFrom @(\S+)$/, async (msg: Message, match: RegExpExecArray | null) => {
     const chatId = msg.chat.id
     await getLastMessageFrom({ bot, msg, chatId, match })
   })
@@ -41,8 +41,8 @@ const bot = (token: string): void => {
     Commands:
       /start - Start the bot
       /remember - Remember the message
-      /getMessagesFrom username - Get all messages from a user
-      /getLastMessageFrom username - Get last message from user
+      /getMessagesFrom @username - Get all messages from a user
+      /getLastMessageFrom @username - Get last message from user
       /help - Show this message`
     )
   })

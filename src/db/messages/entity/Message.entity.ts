@@ -7,7 +7,7 @@ import { Entity, Column, PrimaryColumn } from 'typeorm'
 })
 export default class Message {
   @PrimaryColumn('uuid', { name: 'id', nullable: false, unique: true })
-  id: number;
+  id: string;
 
   @Column('varchar', { length: 255, nullable: false, name: 'username' })
   username: string;
@@ -21,7 +21,7 @@ export default class Message {
   @Column('bigint', { name: 'chatid', nullable: false })
   chatid: number;
 
-  constructor(id: number, username: string, message: string, timestamp: Date, chatid: number) {
+  constructor(id: string, username: string, message: string, timestamp: Date, chatid: number) {
     this.id = id;
     this.username = username;
     this.message = message;

@@ -1,3 +1,4 @@
+import { ChatAlreadyExistsError } from '../../db/chats/errors/ChatErrors';
 import ChatRepository from '../../db/chats/repository/chatRepository'
 import type BotFunctions from '../types/BotFunctions'
 
@@ -9,9 +10,12 @@ export const checkGroup = async ({ bot, msg, chatId }: BotFunctions): Promise<vo
     try {
       await chat.save({ chatid: chatId, chatname: msg.chat?.title ?? `chat_${chatId}` })
       await bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!');
-    } catch (error: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      await bot.sendMessage(chatId, error.message)
+    } catch (error: unknown) {
+      if (error instanceof ChatAlreadyExistsError) {
+        await bot.sendMessage(chatId, error.message)
+      } else {
+        await bot.sendMessage(chatId, 'There has been an error')
+      }
     }
   }
 }
