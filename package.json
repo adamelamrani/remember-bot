@@ -7,7 +7,8 @@
   "author": "Adam El Amrani Colina <adelamco1091@outlook.com>",
   "license": "MIT",
   "scripts": {
-    "start": "npx ts-node ./src/index.ts",
+    "build": "tsc",
+    "start": "npx ts-node ./dist/index.js",
     "dev": "nodemon ./src/index.ts"
   },
   "dependencies": {
@@ -25,9 +26,15 @@
     "reflect-metadata": "^0.2.1",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.20",
-    "typescript": "^5.3.3"
+    "typescript": "*"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "eslint": "^8.0.1",
+    "eslint-config-standard-with-typescript": "^43.0.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0",
     "tsconfig-paths": "^4.2.0"
   }
 }
