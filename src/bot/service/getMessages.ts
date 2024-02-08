@@ -1,73 +1,46 @@
-import { BotFunctionsWithRegex } from "../types/BotFunctions";
+import type Message from '../../db/messages/entity/Message.entity';
+import { MessagesNotFoundError } from '../../db/messages/errors/MessageErrors';
+import MessagesRepository from '../../db/messages/repository/MessagesRepository';
+import { type BotFunctionsWithRegex } from '../types/BotFunctions';
 
-export const getMessagesFrom = ({ bot, msg, chatId, match }: BotFunctionsWithRegex) => {
+const messageRepository = new MessagesRepository();
 
-  const username = match ? match[1] : "";
+export const getMessagesFrom = async ({ bot, msg, chatId, match }: BotFunctionsWithRegex): Promise<void> => {
+  const username = (match !== null) ? match[1] : '';
 
-  if (msg.chat.type !== "private") {
-    fetch(`${process.env.API_URL}message/${username}/${chatId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    })
-      .then(response => {
-
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Error making the request');
+  if (msg.chat.type !== 'private') {
+    try {
+      const messages = await messageRepository.getAllMessagesFromUser(username, chatId) as Message[]
+      messages.forEach(async (message) => {
+        await bot.sendMessage(chatId, ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`);
       })
-      .then(data => {
-
-        if (data.messages.length === 0) {
-          bot.sendMessage(chatId, `No messages found`);
-        }
-
-        if (data.messages.length >= 1) {
-          data.messages.forEach((message: any) => {
-            bot.sendMessage(chatId, ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`);
-          });
-        }
-      })
-      .catch(error => {
-        console.log('There has been an error: ', error);
-      });
+    } catch (error: unknown) {
+      if (error instanceof MessagesNotFoundError) {
+        await bot.sendMessage(chatId, error.message);
+      } else {
+        await bot.sendMessage(chatId, 'There has been an error')
+      }
+    }
   } else {
-    bot.sendMessage(chatId, `This command can only be used in a group chat`);
-
+    await bot.sendMessage(chatId, 'This command can only be used in a group chat');
   }
 }
 
+export const getLastMessageFrom = async ({ bot, msg, chatId, match }: BotFunctionsWithRegex): Promise<void> => {
+  const username = (match !== null) ? match[1] : '';
 
-export const getLastMessageFrom = ({ bot, msg, chatId, match }: BotFunctionsWithRegex) => {
-  const username = match ? match[1] : "";
-
-  if (msg.chat.type !== "private") {
-    fetch(`${process.env.API_URL}message/${username}/${chatId}/last`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Error making the request');
-      })
-      .then(data => {
-
-        if (data.message === null) {
-          return bot.sendMessage(chatId, `No messages found`);
-        }
-
-        bot.sendMessage(chatId, `${data.message.username} said: ${data.message.message}`);
-      })
-      .catch(error => {
-        console.log('There has been an error: ', error);
-      })
+  if (msg.chat.type !== 'private') {
+    try {
+      const message = await messageRepository.getLastMessageFromUser(username, chatId) as Message
+      await bot.sendMessage(chatId, ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`);
+    } catch (error: unknown) {
+      if (error instanceof MessagesNotFoundError) {
+        await bot.sendMessage(chatId, error.message);
+      } else {
+        await bot.sendMessage(chatId, 'There has been an error')
+      }
+    }
   } else {
-    bot.sendMessage(chatId, `This command can only be used in a group chat`);
+    await bot.sendMessage(chatId, 'This command can only be used in a group chat');
   }
 }

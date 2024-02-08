@@ -1,40 +1,21 @@
-import BotFunctions from "../types/BotFunctions";
+import { ChatAlreadyExistsError } from '../../db/chats/errors/ChatErrors';
+import ChatRepository from '../../db/chats/repository/chatRepository'
+import type BotFunctions from '../types/BotFunctions'
 
-export const checkGroup = async ({ bot, msg, chatId }: BotFunctions) => {
-  if (msg.chat.type !== "private") {
+export const checkGroup = async ({ bot, msg, chatId }: BotFunctions): Promise<void> => {
+  if (msg.chat.type !== 'private') {
     // Verify if the group exists in the database
-    fetch(`${process.env.API_URL}chat/${chatId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    }).then(response => {
-      if (response.ok) {
-        bot.sendMessage(chatId, 'I am already in this chat! I will remember your messages!');
-        return;
+    const chat = new ChatRepository();
+
+    try {
+      await chat.save({ chatid: chatId, chatname: msg.chat?.title ?? `chat_${chatId}` })
+      await bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!');
+    } catch (error: unknown) {
+      if (error instanceof ChatAlreadyExistsError) {
+        await bot.sendMessage(chatId, error.message)
       } else {
-        return fetch(`${process.env.API_URL}chat`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ chatid: chatId, chatname: msg.chat.title })
-        }).then(response => {
-          if (response.ok) {
-            bot.sendMessage(chatId, 'Hey! I will remember your messages! Use /help to see the commands!');
-            return response.json();
-          }
-          throw new Error('Error making the request');
-        })
-          .then(data => {
-            console.log(chatId, 'Response from backend: ' + data.message);
-          })
-          .catch(error => {
-            console.log(chatId, 'There has been an error: ', error);
-          });
+        await bot.sendMessage(chatId, 'There has been an error')
       }
-    })
-  } else {
-    bot.sendMessage(chatId, `Welcome! Add me to a group to save messages and remember them later!`);
+    }
   }
 }
