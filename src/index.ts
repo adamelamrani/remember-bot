@@ -1,4 +1,4 @@
-import 'reflect-metadata'
+import 'reflect-metadata';
 import 'dotenv/config';
 import serverStart from './server/serverStart';
 import chalk from 'chalk';
