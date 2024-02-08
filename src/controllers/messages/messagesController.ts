@@ -36,7 +36,7 @@ class MessagesController implements MessagesControllerInterface {
   ): Promise<void> => {
     try {
       const messageList = await this.messagesRepository.getAllMessagesFromUser(
-        req.params.username,
+        req.params.userid,
         Number(req.params.chatid),
       );
       res.set('Content-Type', 'application/json');

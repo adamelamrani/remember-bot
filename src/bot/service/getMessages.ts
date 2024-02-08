@@ -11,7 +11,12 @@ export const getMessagesFrom = async ({
   chatId,
   match,
 }: BotFunctionsWithRegex): Promise<void> => {
-  const username = match !== null ? match[1] : '';
+  const username =
+    match !== null
+      ? match[1].includes('@')
+        ? match[1].slice(1)
+        : match[1]
+      : '';
 
   if (msg.chat.type !== 'private') {
     try {
@@ -22,7 +27,8 @@ export const getMessagesFrom = async ({
       messages.forEach(async (message) => {
         await bot.sendMessage(
           chatId,
-          ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`,
+          `${new Date(message.timestamp).toLocaleString()} - <a href='tg://user?id=${message?.userid}'>${message?.firstName}</a> said: ${message.message}`,
+          { parse_mode: 'HTML' },
         );
       });
     } catch (error: unknown) {
@@ -46,7 +52,12 @@ export const getLastMessageFrom = async ({
   chatId,
   match,
 }: BotFunctionsWithRegex): Promise<void> => {
-  const username = match !== null ? match[1] : '';
+  const username =
+    match !== null
+      ? match[1].includes('@')
+        ? match[1].slice(1)
+        : match[1]
+      : '';
 
   if (msg.chat.type !== 'private') {
     try {
@@ -56,7 +67,8 @@ export const getLastMessageFrom = async ({
       )) as Message;
       await bot.sendMessage(
         chatId,
-        ` ${new Date(message.timestamp).toLocaleString()} - @${message.username} said: ${message.message}`,
+        `${new Date(message.timestamp).toLocaleString()} - <a href='tg://user?id=${message?.userid}'>${message?.firstName}</a> said: ${message.message}`,
+        { parse_mode: 'HTML' },
       );
     } catch (error: unknown) {
       if (error instanceof MessagesNotFoundError) {

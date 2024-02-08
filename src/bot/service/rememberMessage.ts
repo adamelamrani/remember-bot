@@ -30,20 +30,28 @@ export const rememberMessage = async ({
 
   try {
     const bodyRequest: Message = {
-      username: messageOwner?.username ?? `tg://user?id=${messageOwner?.id}`,
+      username: messageOwner?.username
+        ? messageOwner.username
+        : messageOwner?.first_name!,
+      firstName: messageOwner?.first_name!,
+      userid: messageOwner?.id!,
       id: crypto.randomUUID(),
       message: messageToRemember,
       timestamp: new Date(msg.reply_to_message?.date! * 1000),
       chatid: chatId,
     };
-
+    /**
+     *  @todo
+     *  Implement a solution to avoid problems with username/name
+     * that works for every user
+     * */
     await messageRepository.save(bodyRequest);
     /*     f"<a href='tg://user?id={user_id}'>{user_name}</a>", "HTML" */
     await bot.sendMessage(
       chatId,
       messageOwner?.username
         ? `@${messageOwner?.username} prepare your annus`
-        : `<a href='tg://user?id=${messageOwner?.id}'>${messageOwner?.first_name}</a>`,
+        : `<a href='tg://user?id=${messageOwner?.id}'>${messageOwner?.first_name}</a> prepare your annus`,
       { parse_mode: 'HTML' },
     );
   } catch (error) {

@@ -26,7 +26,7 @@ const bot = (token: string): void => {
   });
 
   bot.onText(
-    /^\/getMessagesFrom @(\S+)$/,
+    /^\/getMessagesFrom (\S+)$/,
     async (msg: Message, match: RegExpExecArray | null) => {
       const chatId = msg.chat.id;
       await getMessagesFrom({ bot, msg, chatId, match });
@@ -34,7 +34,7 @@ const bot = (token: string): void => {
   );
 
   bot.onText(
-    /^\/getLastMessageFrom @(\S+)$/,
+    /^\/getLastMessageFrom (\S+)$/,
     async (msg: Message, match: RegExpExecArray | null) => {
       const chatId = msg.chat.id;
       await getLastMessageFrom({ bot, msg, chatId, match });
