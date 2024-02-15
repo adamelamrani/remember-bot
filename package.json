@@ -9,7 +9,10 @@
   "scripts": {
     "build": "tsc",
     "start": "npx ts-node ./dist/index.js",
-    "dev": "nodemon ./src/index.ts"
+    "dev": "nodemon ./src/index.ts",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "typeorm:chat": "typeorm migration:generate ChatRefactoring -d ./src/server/datasource-config.ts",
+    "typeorm:message": "typeorm migration:generate MessageRefactoring -d ./src/server/datasource-config.ts"
   },
   "dependencies": {
     "@types/express": "^4.17.21",
