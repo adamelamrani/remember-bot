@@ -3,8 +3,8 @@ import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 import Chat from '../db/chats/entity/Chat.entity';
 import Message from '../db/messages/entity/Message.entity';
-import { ChatRefactoringTIMESTAMP1707571248062 } from '../migrations/1707571248062-ChatRefactoringTIMESTAMP';
-import { MessageRefactoringTIMESTAMP1707571327570 } from '../migrations/1707571327570-MessageRefactoringTIMESTAMP';
+import { ChatRefactoring1707991814038 } from '../migrations/1707991814038-ChatRefactoring';
+import { MessageRefactoring1707991798634 } from '../migrations/1707991798634-MessageRefactoring';
 
 export const AppDataSource = new DataSource({
   metadataTableName: 'metadata',
@@ -16,9 +16,6 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   entities: [Chat, Message],
   synchronize: true,
-  migrations: [
-    ChatRefactoringTIMESTAMP1707571248062,
-    MessageRefactoringTIMESTAMP1707571327570,
-  ],
+  migrations: [ChatRefactoring1707991814038, MessageRefactoring1707991798634],
   logging: false,
 });
