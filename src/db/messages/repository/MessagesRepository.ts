@@ -1,19 +1,21 @@
-import { AppDataSource } from '../../../server/serverStart';
+import { AppDataSource } from '../../../server/datasource-config';
 import Message from '../entity/Message.entity';
 import { MessagesNotFoundError } from '../errors/MessageErrors';
 
-const messageRepository = AppDataSource.getRepository(Message);
-
 export default class MessagesRepository {
+  constructor(
+    private readonly messageRepository = AppDataSource.getRepository(Message),
+  ) {}
+
   async save(message: Message): Promise<void> {
-    await messageRepository.save(message);
+    await this.messageRepository.save(message);
   }
 
   async getAllMessagesFromUser(
     username: string,
     chatid: number,
   ): Promise<Message[] | MessagesNotFoundError> {
-    const messages = await messageRepository.findBy({ username, chatid });
+    const messages = await this.messageRepository.findBy({ username, chatid });
 
     if (messages.length === 0) {
       throw new MessagesNotFoundError('No messages found for that user');
@@ -26,7 +28,10 @@ export default class MessagesRepository {
     username: string,
     chatid: number,
   ): Promise<Message | MessagesNotFoundError> {
-    const message = await messageRepository.findOneBy({ username, chatid });
+    const message = await this.messageRepository.findOneBy({
+      username,
+      chatid,
+    });
     if (message === null) {
       throw new MessagesNotFoundError('No message found for that user');
     }
@@ -35,6 +40,6 @@ export default class MessagesRepository {
   }
 
   async getAllMessages(): Promise<Message[]> {
-    return await messageRepository.find();
+    return await this.messageRepository.find();
   }
 }
