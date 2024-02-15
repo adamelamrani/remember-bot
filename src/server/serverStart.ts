@@ -1,24 +1,8 @@
 import { type Express } from 'express';
 import statusSelector from '../utils/statusSelector';
 import 'reflect-metadata';
-import 'dotenv/config';
-import { DataSource } from 'typeorm';
+import { AppDataSource } from './datasource-config';
 import chalk from 'chalk';
-import Chat from '../db/chats/entity/Chat.entity';
-import Message from '../db/messages/entity/Message.entity';
-
-export const AppDataSource = new DataSource({
-  metadataTableName: 'metadata',
-  type: 'postgres',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  entities: [Chat, Message],
-  synchronize: true,
-  logging: false,
-});
 
 const serverStart = async (
   port: number | string,
